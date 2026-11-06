@@ -23,6 +23,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
   if (term) query = query.ilike("full_name", `%${escapeLike(term)}%`);
 
   const { data, error } = await query;
+  if (error) console.error("USERS PAGE ERROR:", error.code, error.message, error.details, error.hint);
   const users = (data ?? []) as unknown as UserRow[];
 
   return (
