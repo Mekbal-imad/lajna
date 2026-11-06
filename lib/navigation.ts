@@ -22,7 +22,7 @@ export const NAV_GROUPS: { title: string; items: NavItem[] }[] = [
   {
     title: "أعمال اللجنة",
     items: [
-      { href: "/meetings", label: "الاجتماعات", icon: CalendarDays, ready: false },
+      { href: "/meetings", label: "الاجتماعات", icon: CalendarDays, ready: true, permission: "meetings.view" },
       { href: "/decisions", label: "القرارات", icon: Gavel, ready: false },
       { href: "/committees", label: "اللجان الفرعية", icon: UsersRound, ready: false },
       { href: "/tasks", label: "المهام", icon: ListChecks, ready: false },
