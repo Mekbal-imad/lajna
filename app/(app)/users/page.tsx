@@ -18,7 +18,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
   const supabase = await createClient();
   let query = supabase
     .from("profiles")
-    .select("id, full_name, phone, is_active, user_roles(roles(code, name_ar)), committee_members(member_role, committees(id, name_ar))")
+    .select("id, full_name, phone, is_active, user_roles!user_roles_user_id_fkey(roles(code, name_ar)), committee_members!committee_members_user_id_fkey(member_role, committees(id, name_ar))")
     .order("full_name");
   if (term) query = query.ilike("full_name", `%${escapeLike(term)}%`);
 
