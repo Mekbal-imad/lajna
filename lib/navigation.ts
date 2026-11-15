@@ -1,6 +1,6 @@
 import {
-  Archive, Bell, CalendarDays, FileBarChart, FolderKanban, Gavel, LayoutDashboard,
-  ListChecks, MessageSquareText, ShieldCheck, Users, UsersRound, Wrench,
+  Archive, Bell, CalendarDays, ClipboardCheck, FileBarChart, FolderKanban, LayoutDashboard,
+  ListChecks, MessageSquareText, Settings, ShieldCheck, Users, UsersRound,
   type LucideIcon,
 } from "lucide-react";
 
@@ -12,6 +12,10 @@ export type NavItem = {
   ready: boolean;
   /** Convenience only: hides the link. Real enforcement is RLS + server checks. */
   permission?: string;
+  /** Paths that keep this item highlighted (defaults to `href`). */
+  match?: string[];
+  /** One item, several entry pages: visible if the user may open any of them; links to the first allowed. */
+  anyOf?: { href: string; permission: string }[];
 };
 
 export const NAV_GROUPS: { title: string; items: NavItem[] }[] = [
@@ -23,17 +27,21 @@ export const NAV_GROUPS: { title: string; items: NavItem[] }[] = [
     title: "أعمال اللجنة",
     items: [
       { href: "/meetings", label: "الاجتماعات", icon: CalendarDays, ready: true, permission: "meetings.view" },
-      { href: "/decisions", label: "القرارات", icon: Gavel, ready: false },
-      { href: "/committees", label: "اللجان الفرعية", icon: UsersRound, ready: false },
-      { href: "/tasks", label: "المهام", icon: ListChecks, ready: false },
-      { href: "/projects", label: "المشاريع السنوية", icon: FolderKanban, ready: false },
+      { href: "/committees", label: "اللجان الفرعية", icon: UsersRound, ready: true, permission: "committees.view" },
+      {
+        href: "/tasks", label: "المهام والقرارات", icon: ListChecks, ready: true,
+        match: ["/tasks", "/decisions"],
+        anyOf: [{ href: "/tasks", permission: "tasks.view" }, { href: "/decisions", permission: "decisions.view" }],
+      },
+      { href: "/projects", label: "المشاريع السنوية", icon: FolderKanban, ready: true, permission: "projects.view" },
     ],
   },
   {
     title: "الخدمات",
     items: [
-      { href: "/maintenance", label: "الصيانة والبلاغات", icon: Wrench, ready: false },
-      { href: "/submissions", label: "الاقتراحات والشكاوى", icon: MessageSquareText, ready: false },
+      // Phase 2: maintenance reports and suggestions/complaints are one section.
+      { href: "/submissions", label: "الاقتراحات والبلاغات", icon: MessageSquareText, ready: false },
+      { href: "/duty", label: "المداومة", icon: ClipboardCheck, ready: false },
     ],
   },
   {
@@ -49,6 +57,7 @@ export const NAV_GROUPS: { title: string; items: NavItem[] }[] = [
     items: [
       { href: "/users", label: "المستخدمون", icon: Users, ready: true, permission: "users.view" },
       { href: "/audit", label: "سجل النشاطات", icon: ShieldCheck, ready: false, permission: "audit.view" },
+      { href: "/settings/lookups/task_priorities", label: "قوائم الإعدادات", icon: Settings, ready: true, permission: "settings.manage" },
     ],
   },
 ];

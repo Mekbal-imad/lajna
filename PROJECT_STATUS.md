@@ -74,3 +74,11 @@ Phase 3: dashboard on real data, committees pages, meetings, decisions, minutes.
 
 ### ملاحظة تحقق
 نجح `tsc --noEmit`. لم يكتمل `next build` في بيئة التنفيذ لأن الوصول إلى Google Fonts محجوب؛ يُتحقق من البناء الكامل على Vercel.
+
+## Pages port: decisions, committees, tasks, projects (branch phase-pages)
+Ported from the developer's additive pack v2, adapted to the real database (migrations A, B, C are applied):
+decisions use `body`/`completed`, history reads `audit_logs`, meetings use `starts_at`, sidebar has one "المهام والقرارات" item with two tabs.
+- Run here: `npm install`, `npm run typecheck` (pass), `npm run lint` (pass), `npm test` (5 pass).
+- `npm run build`: NOT verified locally (the sandbox cannot reach Google Fonts); Vercel's preview build is the check.
+- Manual tests (sidebar tabs, decisions/committees/tasks/projects flows, phone check): NOT run; to be done on the preview.
+- Needs env `SUPABASE_SERVICE_ROLE_KEY` (server only) for attachments; optional `APP_TIMEZONE`.
