@@ -82,3 +82,9 @@ decisions use `body`/`completed`, history reads `audit_logs`, meetings use `star
 - `npm run build`: NOT verified locally (the sandbox cannot reach Google Fonts); Vercel's preview build is the check.
 - Manual tests (sidebar tabs, decisions/committees/tasks/projects flows, phone check): NOT run; to be done on the preview.
 - Needs env `SUPABASE_SERVICE_ROLE_KEY` (server only) for attachments; optional `APP_TIMEZONE`.
+
+## Suggestions & reports (phase 2b, branch submissions)
+- Migration `20261116000000_submissions.sql` (applied to the test and production databases): submissions, notes, permissions `submissions.view/manage` for super_admin, chair, vice_chair, sub_head.
+- Webhook `POST /api/submissions/intake` (secret header `x-intake-secret`, env `SUBMISSIONS_WEBHOOK_SECRET`), fed by `docs/google-form-script.gs`.
+- Run: typecheck, lint, 9 unit tests (including real form rows), SQL rollback test on the test database (refs SB-YYYY-NNN, duplicate protection, review/close stamps, history).
+- NOT run: build (no font access here), manual test on the preview, the live Google Form connection.

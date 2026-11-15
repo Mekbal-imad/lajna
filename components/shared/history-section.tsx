@@ -22,7 +22,7 @@ function summarize(r: Row): string {
 }
 
 /** Shows the change history; RLS decides whether the current user sees any rows at all. */
-export async function HistorySection({ table, rowId }: { table: "meetings" | "decisions" | "committees" | "tasks" | "projects"; rowId: string }) {
+export async function HistorySection({ table, rowId }: { table: "meetings" | "decisions" | "committees" | "tasks" | "projects" | "submissions"; rowId: string }) {
   const supabase = await createClient();
   const { data } = await supabase
     .from("audit_logs").select("id, actor_id, created_at, details")
