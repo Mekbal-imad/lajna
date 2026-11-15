@@ -39,18 +39,23 @@ export function Sidebar({
         <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4">
           {NAV_GROUPS.map((group) => ({
             ...group,
-            items: group.items.filter((i) => !i.permission || permissions.includes(i.permission)),
+            items: group.items.filter((i) =>
+              i.anyOf ? i.anyOf.some((a) => permissions.includes(a.permission)) : !i.permission || permissions.includes(i.permission),
+            ),
           }))
             .filter((group) => group.items.length > 0)
             .map((group) => (
             <div key={group.title}>
               <p className="px-2 pb-1 text-xs text-gold-dark">{group.title}</p>
               <ul>
-                {group.items.map(({ href, label, icon: Icon, ready }) => {
-                  const active = pathname === href || pathname.startsWith(`${href}/`);
+                {group.items.map((item) => {
+                  const { label, icon: Icon, ready } = item;
+                  // an item with several entry pages links to the first one the user may open
+                  const href = item.anyOf?.find((a) => permissions.includes(a.permission))?.href ?? item.href;
+                  const active = (item.match ?? [item.href]).some((m) => pathname === m || pathname.startsWith(`${m}/`));
                   const base = "flex items-center gap-3 rounded px-2 py-2 text-sm";
                   return (
-                    <li key={href}>
+                    <li key={item.href}>
                       {ready ? (
                         <Link
                           href={href}
