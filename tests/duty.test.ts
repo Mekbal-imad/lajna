@@ -65,6 +65,10 @@ describe("summarize", () => {
     expect(s.avgDelay).toBe(10);
     expect(s.duties[0]).toMatchObject({ answered: 2, done: 1, rate: 50 });
     expect(s.lateFiled).toBe(1);
+    // days before the first report ever received are not "missing"
+    const fresh = summarize(rows, "2026-11-01", "2026-11-14", "2026-11-14", "2026-11-10");
+    expect(fresh.missingDays).toEqual(["2026-11-12"]);
+    expect(fresh.days).toBe(5);
     expect(s.people.find((p) => p.name === "أ")).toMatchObject({ shifts: 2, absent: 1 });
   });
 });

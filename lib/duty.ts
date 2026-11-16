@@ -127,11 +127,16 @@ export function datesBetween(from: string, to: string): string[] {
   return out;
 }
 
-export function summarize(rows: DutyRow[], from: string, to: string, today: string) {
+/**
+ * `firstReportDate` = the day of the very first report ever received. Days before it are not counted as
+ * missing: duty was not being reported yet (so a new site does not start with a long list of "missing" days).
+ */
+export function summarize(rows: DutyRow[], from: string, to: string, today: string, firstReportDate: string | null = null) {
   const inRange = rows.filter((r) => r.duty_date >= from && r.duty_date <= to);
   const reported = new Set(inRange.map((r) => r.duty_date));
+  const countFrom = firstReportDate && firstReportDate > from ? firstReportDate : from;
   // today's shift happens after sunset: it only counts as missing from tomorrow on
-  const missingDays = datesBetween(from, to).filter((d) => d < today && !reported.has(d));
+  const missingDays = datesBetween(countFrom, to).filter((d) => d < today && !reported.has(d));
 
   const count = (a: string) => inRange.filter((r) => r.attendance === a).length;
   const present = inRange.filter((r) => r.attendance === "on_time" || r.attendance === "late");
@@ -163,7 +168,8 @@ export function summarize(rows: DutyRow[], from: string, to: string, today: stri
 
   return {
     reports: inRange.length,
-    days: datesBetween(from, to).filter((d) => d <= today).length,
+    days: countFrom > to ? 0 : datesBetween(countFrom, to).filter((d) => d <= today).length,
+    countedFrom: countFrom,
     reportedDays: reported.size,
     missingDays,
     attendance: { on_time: count("on_time"), late: count("late"), absent_excused: count("absent_excused"), absent_unexcused: count("absent_unexcused") },
