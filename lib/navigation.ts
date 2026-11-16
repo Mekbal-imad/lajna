@@ -41,7 +41,7 @@ export const NAV_GROUPS: { title: string; items: NavItem[] }[] = [
     items: [
       // Phase 2: maintenance reports and suggestions/complaints are one section.
       { href: "/submissions", label: "الاقتراحات والبلاغات", icon: MessageSquareText, ready: true, permission: "submissions.view" },
-      { href: "/duty", label: "المداومة", icon: ClipboardCheck, ready: false },
+      { href: "/duty", label: "المداومة", icon: ClipboardCheck, ready: true, permission: "duty.view" },
     ],
   },
   {

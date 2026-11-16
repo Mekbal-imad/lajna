@@ -88,3 +88,10 @@ decisions use `body`/`completed`, history reads `audit_logs`, meetings use `star
 - Webhook `POST /api/submissions/intake` (secret header `x-intake-secret`, env `SUBMISSIONS_WEBHOOK_SECRET`), fed by `docs/google-form-script.gs`.
 - Run: typecheck, lint, 9 unit tests (including real form rows), SQL rollback test on the test database (refs SB-YYYY-NNN, duplicate protection, review/close stamps, history).
 - NOT run: build (no font access here), manual test on the preview, the live Google Form connection.
+
+## Duty shifts (phase 2c, branch duty-reports)
+- Migration `20261117000000_duty_reports.sql` (applied to test and production): duty_reports, permissions `duty.view/manage` for super_admin, chair, vice_chair, sub_head.
+- Webhook `POST /api/duty/intake` (same secret `SUBMISSIONS_WEBHOOK_SECRET`), fed by `docs/google-duty-script.gs`.
+- Page /duty: coverage and missing days, on-time rate, attendance counts, completion rate of the 7 duties, per-person table, open shortages (convertible to tasks), recent reports.
+- Late minutes are read from the free text when written; attendance status decides late / on time.
+- Run: typecheck, lint, 15 unit tests (incl. real form rows), SQL rollback test on the test database. NOT run: build, manual test on preview, live form connection.
