@@ -8,6 +8,9 @@ export const ATTENDANCE: Record<string, { label: string; tone: Tone }> = {
   absent_unexcused: { label: "غائب بدون عذر", tone: "late" },
 };
 
+/** First official day of duty reporting. Earlier rows (tests) are ignored by the dashboard. */
+export const DUTY_START_DATE = "2026-11-17";
+
 export const RATING_LABEL: Record<number, string> = { 1: "ضعيف", 2: "متوسط", 3: "حسن", 4: "جيد" };
 
 /** The 7 duties of the shift, short names (the form has the full wording). */

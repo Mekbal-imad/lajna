@@ -4,7 +4,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { requirePermission } from "@/lib/auth/session";
 import { formatDate, todayLocal } from "@/lib/datetime";
-import { ATTENDANCE, RATING_LABEL, summarize, type DutyRow } from "@/lib/duty";
+import { ATTENDANCE, DUTY_START_DATE, RATING_LABEL, summarize, type DutyRow } from "@/lib/duty";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
@@ -28,7 +28,19 @@ export default async function DutyPage({ searchParams }: { searchParams: Promise
   const sp = await searchParams;
   const days = RANGES.find((d) => String(d) === sp.days) ?? 30;
   const today = todayLocal();
-  const from = shift(today, -(days - 1));
+  const windowStart = shift(today, -(days - 1));
+  const from = windowStart > DUTY_START_DATE ? windowStart : DUTY_START_DATE;
+
+  if (today < DUTY_START_DATE) {
+    return (
+      <div className="mx-auto max-w-3xl space-y-6">
+        <h1 className="text-2xl font-bold text-forest">المداومة</h1>
+        <p className="border border-line bg-white p-6 text-sm">
+          تبدأ المتابعة الرسمية للمداومة يوم {formatDate(DUTY_START_DATE)}. ستظهر هنا الإحصاءات بعد وصول أول تقارير ذلك اليوم.
+        </p>
+      </div>
+    );
+  }
 
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -37,8 +49,7 @@ export default async function DutyPage({ searchParams }: { searchParams: Promise
     .gte("duty_date", from).lte("duty_date", today)
     .order("duty_date", { ascending: false }).order("submitted_at", { ascending: false }).limit(1000);
   const rows = (data ?? []) as DutyRow[];
-  const { data: first } = await supabase.from("duty_reports").select("duty_date").order("duty_date", { ascending: true }).limit(1).maybeSingle();
-  const s = summarize(rows, from, today, today, (first?.duty_date as string | undefined) ?? null);
+  const s = summarize(rows, from, today, today);
   const open = rows.filter((r) => r.shortage_status === "open");
 
   return (
@@ -60,7 +71,7 @@ export default async function DutyPage({ searchParams }: { searchParams: Promise
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="أيام بها تقرير" value={`${s.reportedDays} / ${s.days}`} hint={`${s.reports} تقرير`} />
-        <Stat label="أيام بلا تقرير" value={String(s.missingDays.length)} tone={s.missingDays.length ? "bad" : undefined} hint={`منذ أول تقرير (${formatDate(s.countedFrom)})، دون اليوم الحالي`} />
+        <Stat label="أيام بلا تقرير" value={String(s.missingDays.length)} tone={s.missingDays.length ? "bad" : undefined} hint={`منذ ${formatDate(s.countedFrom)}، دون اليوم الحالي`} />
         <Stat label="نسبة الحضور في الوقت" value={s.onTimeRate === null ? "—" : `${s.onTimeRate}%`}
           hint={s.avgDelay === null ? undefined : `متوسط التأخر ${s.avgDelay} د`} />
         <Stat label="متوسط التقييم" value={s.avgRating === null ? "—" : `${s.avgRating} / 4`}
