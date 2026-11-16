@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Routes reachable without a session. "/api/submissions/intake" is the Google Form webhook (authenticated by a shared secret).
-const PUBLIC_PATHS = ["/login", "/submit", "/api/submissions/intake"];
+const PUBLIC_PATHS = ["/login", "/submit", "/api/submissions/intake", "/api/duty/intake"];
 
 export async function updateSession(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
