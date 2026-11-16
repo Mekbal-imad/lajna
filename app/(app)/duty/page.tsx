@@ -37,7 +37,8 @@ export default async function DutyPage({ searchParams }: { searchParams: Promise
     .gte("duty_date", from).lte("duty_date", today)
     .order("duty_date", { ascending: false }).order("submitted_at", { ascending: false }).limit(1000);
   const rows = (data ?? []) as DutyRow[];
-  const s = summarize(rows, from, today, today);
+  const { data: first } = await supabase.from("duty_reports").select("duty_date").order("duty_date", { ascending: true }).limit(1).maybeSingle();
+  const s = summarize(rows, from, today, today, (first?.duty_date as string | undefined) ?? null);
   const open = rows.filter((r) => r.shortage_status === "open");
 
   return (
@@ -59,7 +60,7 @@ export default async function DutyPage({ searchParams }: { searchParams: Promise
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="أيام بها تقرير" value={`${s.reportedDays} / ${s.days}`} hint={`${s.reports} تقرير`} />
-        <Stat label="أيام بلا تقرير" value={String(s.missingDays.length)} tone={s.missingDays.length ? "bad" : undefined} hint="لا يُحتسب اليوم الحالي" />
+        <Stat label="أيام بلا تقرير" value={String(s.missingDays.length)} tone={s.missingDays.length ? "bad" : undefined} hint={`منذ أول تقرير (${formatDate(s.countedFrom)})، دون اليوم الحالي`} />
         <Stat label="نسبة الحضور في الوقت" value={s.onTimeRate === null ? "—" : `${s.onTimeRate}%`}
           hint={s.avgDelay === null ? undefined : `متوسط التأخر ${s.avgDelay} د`} />
         <Stat label="متوسط التقييم" value={s.avgRating === null ? "—" : `${s.avgRating} / 4`}
