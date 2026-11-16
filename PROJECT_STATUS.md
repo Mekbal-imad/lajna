@@ -95,3 +95,8 @@ decisions use `body`/`completed`, history reads `audit_logs`, meetings use `star
 - Page /duty: coverage and missing days, on-time rate, attendance counts, completion rate of the 7 duties, per-person table, open shortages (convertible to tasks), recent reports.
 - Late minutes are read from the free text when written; attendance status decides late / on time.
 - Run: typecheck, lint, 15 unit tests (incl. real form rows), SQL rollback test on the test database. NOT run: build, manual test on preview, live form connection.
+
+## Dashboard with real data (branch dashboard-real-data)
+- Replaces the mock dashboard. Every number is a link to the filtered list (overdue tasks, awaiting approval, my tasks, proposed decisions, minutes without approval, new/urgent suggestions, duty on-time rate and missing days). Each block appears only if the user has the matching view permission.
+- Lists: needs attention (overdue tasks, new suggestions), my tasks, upcoming meetings, latest decisions, progress of active projects.
+- Run: typecheck, lint, unit tests. NOT run: build, manual test on the preview.
