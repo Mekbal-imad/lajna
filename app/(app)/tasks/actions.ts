@@ -109,7 +109,9 @@ export async function decideCompletion(_prev: ActionState, fd: FormData): Promis
   if (!s) return FORBIDDEN;
   const id = uuid.safeParse(fd.get("id"));
   if (!id.success) return { error: "معرّف غير صحيح." };
-  const approve = fd.get("decision") === "approve";
+  // ActionForm submits multi-button choices as `intent`; accept `decision` for older callers.
+  const choice = fd.get("intent") ?? fd.get("decision");
+  const approve = choice === "approve";
   const note = z.string().trim().max(1000).safeParse(fd.get("note") ?? "");
   if (!note.success) return { error: "الملاحظة طويلة جدًا." };
   if (!approve && note.data.length < 3) return { error: "اكتب سبب إعادة المهمة للتنفيذ." };
