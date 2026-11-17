@@ -93,11 +93,17 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
         <Section title="اعتماد الإنجاز">
           <div className="space-y-3 px-4 py-4">
             <p className="text-sm text-muted">بلغت المهمة 100% بانتظار التحقق. لا تُحتسب مكتملة إلا بعد الاعتماد.</p>
-            <ActionForm action={decideCompletion} submitLabel="" variant="quiet"
-              intents={[{ value: "approve", label: "اعتماد الإنجاز", variant: "primary" }, { value: "reject", label: "إعادة للتنفيذ", variant: "danger" }]}>
-              <input type="hidden" name="id" value={t.id} />
-              <TextArea label="ملاحظة (مطلوبة عند الإعادة)" name="note" rows={2} />
-            </ActionForm>
+            <div className="flex flex-wrap items-start gap-3">
+              <ActionForm action={decideCompletion} submitLabel="اعتماد الإنجاز" variant="primary">
+                <input type="hidden" name="id" value={t.id} />
+                <input type="hidden" name="decision" value="approve" />
+              </ActionForm>
+              <ActionForm action={decideCompletion} submitLabel="إعادة للتنفيذ" variant="danger">
+                <input type="hidden" name="id" value={t.id} />
+                <input type="hidden" name="decision" value="reject" />
+                <TextArea label="سبب الإعادة (مطلوب)" name="note" rows={2} />
+              </ActionForm>
+            </div>
           </div>
         </Section>
       ) : null}
